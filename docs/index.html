@@ -44,24 +44,6 @@
     <link href="styles/styles.min.css?v=0.8.13" rel="stylesheet">
 
     <!-- Google Analytics-->
-        <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-171657234-1"></script>
-    <script>
-        if (true) {
-            window.dataLayer = window.dataLayer || [];
-
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-
-            gtag('js', new Date());
-
-            gtag('config', 'UA-171657234-1');
-        } else {
-            function gtag(){};
-        }
-    </script>
-
     <style>
         #game.loading {
             display: none !important;
@@ -591,7 +573,13 @@
         </button>
     </div>
 </script>
+<script type="text/html" id="battlePartyPokemonTemplate">
+      <!-- ko ifnot: $data == null -->
+    <img src="" class="battlePartyPokemon" data-bind=" attr:{ src: PokedexHelper.getImage($data.pokemon.id)}">
+                    <!-- /ko -->
 
+    <!-- <div class="pokemonAttack" data-bind="text: $data.attack"></div> -->
+</script>
 <div id="game" class="container loading">
     <div class="row justify-content-center">
         <!--The id title is needed for a default marker for money animation to display when not in a wild battle where the playerMoney span is not visible-->
@@ -1357,7 +1345,8 @@
                                             title: Battle.enemyPokemon()
                                                 ? `${App.game.party.calculatePokemonAttack(
                                                     Battle.enemyPokemon().type1,
-                                                    Battle.enemyPokemon().type2
+                                                    Battle.enemyPokemon().type2,
+                                                    true,
                                                 ).toLocaleString('en-US')} against ${Battle.enemyPokemon().name}`
                                                 : '',
                                             trigger: 'hover',
@@ -7094,7 +7083,7 @@
 
      
 
-<image href="assets/images/map/distorsion_world.png" xlink:href="assets/images/map/distorsion_world.png"
+<image href="assets/images/map/distortion_world.png" xlink:href="assets/images/map/distortion_world.png"
     x="1184"
     y="624"
     height="80"
@@ -13115,6 +13104,31 @@
 </div>
 
 
+            <!-- Battle Party-->
+            <div id="battlePartyDisplay" class="card sortable border-secondary mb-3" data-bind="visible: App.game.partySlots.canAccess()">
+    <div class="card-header p-0" data-toggle="collapse" href="#battlePartyPokemonList">
+        <span>Battle Party</span>
+    </div>
+    <button class='btn btn-sm btn-primary' style="position: absolute; right: 0px; top: 0px; width: auto; height: 41px;" data-bind='click: function(){ BattlePartyController.openBattlePartyModal(); }'>
+        List
+    </button>
+    <div id='battlePartyPokemonList' class="card-body p-0 show">
+        <div class="row m-0" data-bind="foreach: App.game.partySlots.partyPokemon">
+            <div class="col-3 col-md-6 p-0slot battlePartyPokemonSlot">
+                <div class="content">
+                    <div class="clickable" data-bind="click: function(){BattlePartyController.onBattlePartySlotClick($index())}">
+
+
+                        <div data-bind="template: { name: 'battlePartyPokemonTemplate', data: $data}, class: 'partyslot'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
             <!-- Shortcuts Menu -->
             <div id="shortcutsContainer" class="card sortable border-secondary mb-3" data-bind="visible: player.highestRegion">
     <div class="card-header p-0" data-toggle="collapse" href="#shortcutsBody">
@@ -14510,6 +14524,9 @@ aria-labelledby="breedingModalLabel" aria-hidden="true">
    </div>
 </div>
 </div>
+
+
+<!-- Battle Party Modal -->
 
 
 <!-- Underground Modal -->
